@@ -43,7 +43,7 @@ def setup_driver():
     options.add_argument('--disable-gpu')
     options.add_argument('--window-size=1920,1080')
     options.add_argument('--remote-debugging-port=9222')
-    # Condition: disable headless if SHOW_CHROME env variable is "true"
+    # Disable headless unless SHOW_CHROME env variable is "true"
     if os.environ.get("SHOW_CHROME", "false").lower() != "true":
         options.add_argument('--headless')
     
@@ -55,18 +55,19 @@ def setup_driver():
         else:
             raise Exception("Chrome binary not found on macOS. Install Google Chrome (e.g., via 'brew install --cask google-chrome').")
     else:
-        # For Linux, check environment variable or common paths
         binary = os.environ.get('GOOGLE_CHROME_BIN')
         if binary and os.path.exists(binary):
             options.binary_location = binary
         else:
-            for path in ['/usr/bin/google-chrome', '/usr/bin/google-chrome-stable', '/usr/bin/chromium-browser', '/usr/bin/chromium']:
+            for path in ['/usr/bin/google-chrome',
+                         '/usr/bin/google-chrome-stable',
+                         '/usr/bin/chromium-browser',
+                         '/usr/bin/chromium']:
                 if os.path.exists(path):
                     options.binary_location = path
                     break
-    
-    # Ensure that ChromeDriver is updated with webdriver-manager
-    service = Service(ChromeDriverManager().install())
+    # Explicitly specify the driver version to match installed Chrome
+    service = Service(ChromeDriverManager(version="133.0.6943.127").install())
     try:
         return webdriver.Chrome(service=service, options=options)
     except Exception as e:
