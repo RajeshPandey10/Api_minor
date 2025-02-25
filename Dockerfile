@@ -7,13 +7,14 @@ RUN apt-get update && \
     echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list && \
     apt-get update && \
     apt-get install -y google-chrome-stable && \
+    ln -s /usr/bin/google-chrome-stable /usr/bin/google-chrome && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-# Copy requirements and install them
-COPY requirements.txt /app/
+# Copy and install Python dependencies. Use './' to refer to the current directory.
+COPY ./requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application code (including server1.py and other files)
+# Copy the entire API code into the container
 COPY . /app/
 CMD ["python", "server1.py"]
