@@ -41,8 +41,9 @@ def setup_driver():
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--window-size=1920,1080')
-    options.add_argument('--headless')  # headless mode enabled
-
+    # Condition: disable headless if SHOW_CHROME env variable is "true"
+    if os.environ.get("SHOW_CHROME", "false").lower() != "true":
+        options.add_argument('--headless')
     if sys.platform == 'darwin':
         mac_path = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
         if os.path.exists(mac_path):
