@@ -126,10 +126,10 @@ def scrape_reviews(url):
     return len(reviews_list)
 
 # Load the Logistic Regression model and vectorizer
-with open('/Users/rajeshpandey/Documents/PAFR/api/model_LogisticRegression.pkl', 'rb') as file:
+with open('model_LogisticRegression.pkl', 'rb') as file:
     model = pickle.load(file)
 
-with open('/Users/rajeshpandey/Documents/PAFR/api/vectorizer.pkl', 'rb') as file:
+with open('vectorizer.pkl', 'rb') as file:
     vectorizer = pickle.load(file)
 
 # Function to analyze reviews using the Logistic Regression model
