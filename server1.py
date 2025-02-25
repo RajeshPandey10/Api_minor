@@ -41,7 +41,14 @@ def setup_driver():
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--window-size=1920,1080')
     options.add_argument('--headless')  # enable headless mode
-    chrome_bin = os.environ.get('GOOGLE_CHROME_BIN', '/usr/bin/google-chrome')
+    chrome_bin = os.environ.get('GOOGLE_CHROME_BIN')
+    if not chrome_bin or not os.path.exists(chrome_bin):
+        if os.path.exists('/usr/bin/chromium-browser'):
+            chrome_bin = '/usr/bin/chromium-browser'
+        elif os.path.exists('/usr/bin/chromium'):
+            chrome_bin = '/usr/bin/chromium'
+        else:
+            chrome_bin = '/usr/bin/google-chrome'  # fallback
     options.binary_location = chrome_bin  # specify chrome binary location
     service = Service(ChromeDriverManager().install())
     return webdriver.Chrome(service=service, options=options)
@@ -264,6 +271,10 @@ def analyze():
     except Exception as e:
         print(f"Error: {str(e)}")
         return jsonify({'error': str(e)}), 500
+
+@app.route('/', methods=['GET'])
+def home():
+    return "hello you are alive"  # default route response
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)  # updated to bind to 0.0.0.0
