@@ -8,6 +8,7 @@ RUN apt-get update && \
     echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-linux-signing-key.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list && \
     apt-get update && \
     apt-get install -y google-chrome-stable && \
+    rm -f /usr/bin/google-chrome && \
     ln -s /usr/bin/google-chrome-stable /usr/bin/google-chrome && \
     rm -rf /var/lib/apt/lists/*
 
