@@ -222,7 +222,6 @@ def analyze_reviews_with_rf():
         'sentiment_plot': 'static/sentiment.png'
     }
 
-
 @app.route('/', methods=['POST'])
 def analyze():
     """API endpoint to analyze product reviews."""
@@ -264,4 +263,4 @@ def analyze():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(port=8000, debug=True)
+    app.run(host='0.0.0.0',port=8000, debug=True)
