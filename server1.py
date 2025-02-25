@@ -18,6 +18,7 @@ import os
 from deep_translator import GoogleTranslator
 from langdetect import detect
 import sys
+import joblib  # add this import at the top
 
 app = Flask(__name__)
 CORS(app)
@@ -159,12 +160,18 @@ def scrape_reviews(url):
     
     return len(reviews_list)
 
-# Load the Logistic Regression model and vectorizer
-with open('model_LogisticRegression.pkl', 'rb') as file:
-    model = pickle.load(file)
+# Load the Logistic Regression model and vectorizer using joblib
+try:
+    model = joblib.load('model_LogisticRegression.pkl')
+except Exception as e:
+    print("Error loading model_LogisticRegression.pkl:", str(e))
+    raise
 
-with open('vectorizer.pkl', 'rb') as file:
-    vectorizer = pickle.load(file)
+try:
+    vectorizer = joblib.load('vectorizer.pkl')
+except Exception as e:
+    print("Error loading vectorizer.pkl:", str(e))
+    raise
 
 # Function to analyze reviews using the Logistic Regression model
 def analyze_reviews_with_rf():
