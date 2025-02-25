@@ -43,18 +43,23 @@ def setup_driver():
     options.add_argument('--window-size=1920,1080')
     options.add_argument('--headless')  # headless mode enabled
 
-    # For macOS, use the typical Chrome binary location
     if sys.platform == 'darwin':
         mac_path = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
         if os.path.exists(mac_path):
             options.binary_location = mac_path
     else:
-        # Check for chrome binary via environment variable or common Linux paths
+        # For Linux, try environment variable first
         binary = os.environ.get('GOOGLE_CHROME_BIN')
         if binary and os.path.exists(binary):
             options.binary_location = binary
         else:
-            for path in ['/usr/bin/chromium-browser', '/usr/bin/chromium', '/usr/bin/google-chrome-stable']:
+            # Check common installation paths
+            for path in [
+                '/usr/bin/google-chrome',
+                '/usr/bin/google-chrome-stable',
+                '/usr/bin/chromium-browser',
+                '/usr/bin/chromium'
+            ]:
                 if os.path.exists(path):
                     options.binary_location = path
                     break
