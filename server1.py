@@ -77,39 +77,35 @@ def setup_driver():
 def scrape_reviews(url):
     """Scrapes reviews from Daraz and saves them in a CSV file."""
     driver = setup_driver()
-    # Set an implicit wait for 30 seconds to allow elements to load.
-    driver.implicitly_wait(5)
+    # Lower implicit wait for faster response
+    driver.implicitly_wait(10)
     wait = WebDriverWait(driver, 10)
     reviews_list = []
     
     try:
-        # Load page and wait longer
         print("Loading URL...")
         driver.get(url)
-        time.sleep(10)  # increased delay
+        time.sleep(5)  # Reduced initial delay
 
-        # Scroll steps to trigger lazy loading (increase delay if necessary)
+        # Scroll steps with reduced delay
         for scroll in range(0, 2000, 200):
             driver.execute_script(f"window.scrollTo(0, {scroll})")
-            time.sleep(1)
+            time.sleep(0.5)  # Reduced scrolling delay
 
-        # Wait and scroll for reviews section
         print("Finding reviews section...")
         review_tab = wait.until(EC.element_to_be_clickable(
             (By.CSS_SELECTOR, '[data-spm-anchor-id*="review"]')))
         driver.execute_script("arguments[0].scrollIntoView({behavior: 'smooth'});", review_tab)
-        time.sleep(3)
+        time.sleep(2)
 
         if not retry_click(driver, '[data-spm-anchor-id*="review"]'):
             print("Failed to click reviews tab")
             return 0
 
-        # Attempt to scrape reviews
         page = 1
         while True:
             print(f"Processing page {page}")
             try:
-                # Wait for reviews container
                 reviews = wait.until(EC.presence_of_all_elements_located(
                     (By.CSS_SELECTOR, '.mod-reviews .item')))
             except Exception as e:
@@ -121,7 +117,6 @@ def scrape_reviews(url):
                     text = review.find_element(By.CSS_SELECTOR, '.content').text
                     date = review.find_element(By.CSS_SELECTOR, '.top').text
                     author = review.find_element(By.CSS_SELECTOR, '.middle').text
-
                     if text.strip():
                         reviews_list.append({
                             'reviewText': text.strip(),
@@ -132,28 +127,25 @@ def scrape_reviews(url):
                 except StaleElementReferenceException:
                     continue
 
-            # If no new reviews found on this page, try refreshing once.
+            # Refresh page once if first pass no reviews found
             if not reviews_list and page == 1:
                 print("No reviews found on first pass, refreshing the page...")
                 driver.refresh()
-                time.sleep(10)
+                time.sleep(5)  # Reduced refresh delay
                 continue
 
-            # Save progress after each page
             if reviews_list:
                 df = pd.DataFrame(reviews_list)
                 df.to_csv('reviews.csv', index=False)
 
-            # Try clicking the next page
             try:
                 next_button = driver.find_element(By.XPATH, '//button[contains(@class, "next-pagination-item next")]')
                 next_button.click()
-                # Break if button indicates disabled
                 if 'ant-pagination-disabled' in next_button.get_attribute("class"):
                     print("No more pages")
                     break
                 driver.execute_script("arguments[0].scrollIntoView({behavior: 'smooth'});", next_button)
-                time.sleep(3)
+                time.sleep(1)
                 page += 1
             except Exception as e:
                 print(f"Pagination error: {str(e)}")
