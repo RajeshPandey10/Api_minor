@@ -40,6 +40,9 @@ def setup_driver():
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--window-size=1920,1080')
+    options.add_argument('--headless')  # enable headless mode
+    chrome_bin = os.environ.get('GOOGLE_CHROME_BIN', '/usr/bin/google-chrome')
+    options.binary_location = chrome_bin  # specify chrome binary location
     service = Service(ChromeDriverManager().install())
     return webdriver.Chrome(service=service, options=options)
 
