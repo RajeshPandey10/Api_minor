@@ -47,19 +47,14 @@ def setup_driver():
         mac_path = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
         if os.path.exists(mac_path):
             options.binary_location = mac_path
+        else:
+            raise Exception("Chrome binary not found on macOS. Install Google Chrome (e.g., via 'brew install --cask google-chrome').")
     else:
-        # For Linux, try environment variable first
         binary = os.environ.get('GOOGLE_CHROME_BIN')
         if binary and os.path.exists(binary):
             options.binary_location = binary
         else:
-            # Check common installation paths
-            for path in [
-                '/usr/bin/google-chrome',
-                '/usr/bin/google-chrome-stable',
-                '/usr/bin/chromium-browser',
-                '/usr/bin/chromium'
-            ]:
+            for path in ['/usr/bin/google-chrome', '/usr/bin/google-chrome-stable', '/usr/bin/chromium-browser', '/usr/bin/chromium']:
                 if os.path.exists(path):
                     options.binary_location = path
                     break
