@@ -223,7 +223,7 @@ def analyze_reviews_with_rf():
     }
 
 
-@app.route('/analyze', methods=['POST'])
+@app.route('/', methods=['POST'])
 def analyze():
     """API endpoint to analyze product reviews."""
     try:
