@@ -168,8 +168,22 @@ with open('vectorizer.pkl', 'rb') as file:
 
 # Function to analyze reviews using the Logistic Regression model
 def analyze_reviews_with_rf():
-    # Load the scraped reviews
-    df = pd.read_csv('reviews.csv')
+    try:
+        df = pd.read_csv('reviews.csv')
+        print("CSV loaded, shape:", df.shape)
+    except Exception as csv_err:
+        print("Error reading CSV:", csv_err)
+        raise
+
+    # Check model and vectorizer loading (make sure these files are valid)
+    try:
+        with open('model_LogisticRegression.pkl', 'rb') as file:
+            model = pickle.load(file)
+        with open('vectorizer.pkl', 'rb') as file:
+            vectorizer = pickle.load(file)
+    except Exception as pkl_err:
+        print("Error loading model/vectorizer:", pkl_err)
+        raise
 
     # Handle missing values in the reviewText column
     df['reviewText'] = df['reviewText'].fillna('')  # Replace NaN with an empty string
@@ -193,10 +207,12 @@ def analyze_reviews_with_rf():
     print("Translation completed and saved!")
 
     # Transform reviews using the saved vectorizer
-    X_test = vectorizer.transform(df['translated_review'])
-
-    # Make predictions with the RandomForest model
-    predictions = model.predict(X_test)
+    try:
+        X_test = vectorizer.transform(df['translated_review'])
+        predictions = model.predict(X_test)
+    except Exception as pred_err:
+        print("Error during model prediction:", pred_err)
+        raise
 
     # Manually map numeric predictions to sentiment labels
     sentiment_mapping = {
