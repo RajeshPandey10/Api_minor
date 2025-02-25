@@ -40,6 +40,16 @@ def setup_driver():
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--window-size=1920,1080')
+    options.add_argument('--headless')  # headless mode enabled
+    # Check for chrome binary via environment variable or common paths
+    binary = os.environ.get('GOOGLE_CHROME_BIN')
+    if binary and os.path.exists(binary):
+        options.binary_location = binary
+    else:
+        for path in ['/usr/bin/chromium-browser', '/usr/bin/chromium', '/usr/bin/google-chrome-stable']:
+            if os.path.exists(path):
+                options.binary_location = path
+                break
     service = Service(ChromeDriverManager().install())
     return webdriver.Chrome(service=service, options=options)
 
