@@ -40,10 +40,14 @@ def setup_driver():
     options = webdriver.ChromeOptions()
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--disable-gpu')
     options.add_argument('--window-size=1920,1080')
+    options.add_argument('--remote-debugging-port=9222')
     # Condition: disable headless if SHOW_CHROME env variable is "true"
     if os.environ.get("SHOW_CHROME", "false").lower() != "true":
         options.add_argument('--headless')
+    
+    # Set binary location depending on platform
     if sys.platform == 'darwin':
         mac_path = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
         if os.path.exists(mac_path):
@@ -51,6 +55,7 @@ def setup_driver():
         else:
             raise Exception("Chrome binary not found on macOS. Install Google Chrome (e.g., via 'brew install --cask google-chrome').")
     else:
+        # For Linux, check environment variable or common paths
         binary = os.environ.get('GOOGLE_CHROME_BIN')
         if binary and os.path.exists(binary):
             options.binary_location = binary
@@ -59,8 +64,14 @@ def setup_driver():
                 if os.path.exists(path):
                     options.binary_location = path
                     break
+    
+    # Ensure that ChromeDriver is updated with webdriver-manager
     service = Service(ChromeDriverManager().install())
-    return webdriver.Chrome(service=service, options=options)
+    try:
+        return webdriver.Chrome(service=service, options=options)
+    except Exception as e:
+        print("Error creating Chrome session:", str(e))
+        raise
 
 def scrape_reviews(url):
     """Scrapes reviews from Daraz and saves them in a CSV file."""
