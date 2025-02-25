@@ -6,7 +6,7 @@ flask-cors==5.0.0
 selenium==4.28.1
 webdriver-manager==4.0.2
 pandas==1.5.3
-numpy==1.21.6  # updated to resolve binary incompatibility
+numpy==1.24.2  # updated to a version compatible with the current Python version
 matplotlib==3.10.0
 seaborn==0.13.2
 deep-translator==1.11.4
