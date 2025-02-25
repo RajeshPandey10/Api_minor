@@ -66,8 +66,8 @@ def setup_driver():
                 if os.path.exists(path):
                     options.binary_location = path
                     break
-    # Explicitly specify the driver version to match installed Chrome
-    service = Service(ChromeDriverManager(version="133.0.6943.127").install())
+    # Remove explicit version to let ChromeDriverManager auto-detect
+    service = Service(ChromeDriverManager().install())
     try:
         return webdriver.Chrome(service=service, options=options)
     except Exception as e:
@@ -78,8 +78,8 @@ def scrape_reviews(url):
     """Scrapes reviews from Daraz and saves them in a CSV file."""
     driver = setup_driver()
     # Set an implicit wait for 30 seconds to allow elements to load.
-    driver.implicitly_wait(30)
-    wait = WebDriverWait(driver, 30)
+    driver.implicitly_wait(5)
+    wait = WebDriverWait(driver, 10)
     reviews_list = []
     
     try:
